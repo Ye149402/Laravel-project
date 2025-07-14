@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Category;
+
 
 class CategoryController extends Controller
 {
@@ -11,7 +13,8 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        return view('backend.category.list');
+        $categories = Category::all();
+        return view('backend.category.list',compact('categories'));
     }
 
 
@@ -36,11 +39,15 @@ class CategoryController extends Controller
         // var_dump($request->all());
         // die();
         $request->validate([
-            'categoryName' => 'required',
+            'categoryName' => 'min:3|required',
         ]);
 
 
         $categoryName = $request->categoryName;
+
+        Category::create([
+            'name' => $categoryName,
+        ]);
 
         //return $categoryName;
        
@@ -80,6 +87,9 @@ class CategoryController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $category = Category::find($id);
+        $category->delete();
+        return redirect()->route('categories.index');
+
     }
 }

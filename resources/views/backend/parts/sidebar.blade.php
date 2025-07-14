@@ -109,6 +109,11 @@
                     <i class="fas fa-fw fa-table"></i>
                     <span>Categories</span></a>
             </li>
+            <li class="nav-item active">
+                <a class="nav-link" href="{{ route('students.index') }}">
+                    <i class="fas fa-fw fa-table"></i>
+                    <span>Students</span></a>
+            </li>
 
             <!-- Divider -->
             <hr class="sidebar-divider d-none d-md-block">
