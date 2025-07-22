@@ -70,7 +70,8 @@ class CategoryController extends Controller
      */
     public function edit(string $id)
     {
-       return view('backend.category.edit',compact('id'));    
+       $category = Category::find($id);
+       return view('backend.category.edit',compact('category'));    
         
     }
 
@@ -79,7 +80,21 @@ class CategoryController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        // var_dump($request->all());
+        // die();
+        $request->validate([
+            'categoryName' => 'required|min:3',
+        ]);
+
+        $categoryName = $request->categoryName;
+
+        // update into database table
+        $category = Category::find($id);
+        $category->name = $categoryName;
+        $category->save();
+
+        // redirect to list page
+        return redirect()->route('categories.index');
     }
 
     /**

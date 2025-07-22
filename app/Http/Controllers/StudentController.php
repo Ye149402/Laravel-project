@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Student;
-
 class StudentController extends Controller
 {
     /**
@@ -12,8 +11,8 @@ class StudentController extends Controller
      */
     public function index()
     {
-         $students = Student::all();
-        return view('backend.student.list',compact('students'));
+        $students = Student::orderBy('id', 'desc')->get();
+        return view('backend.student.list', compact('students'));
     }
 
     /**
@@ -29,29 +28,22 @@ class StudentController extends Controller
      */
     public function store(Request $request)
     {
-         $request->validate([
-            'name' => 'min:3|required',
-            'age' =>'required|integer|min:1',
-            'gender' =>'required|in:Male,Female',
-            'address' =>'required|string|max:255'
+        // var_dump($request->all());
+        // die();
+        $request->validate([
+            'studentName' => 'required|min:3',
+            'studentAge' => 'required|numeric',
+            'studentGender' => 'required',
+            'studentAddress' => 'required',
         ]);
 
-
+        $student = new Student();
         $student->name = $request->studentName;
         $student->age = $request->studentAge;
         $student->gender = $request->studentGender;
         $student->address = $request->studentAddress;
+        $student->save();
 
-        Student::create([
-            'name' => $studentName,
-            'age' => $studentAge,
-            'gender' => $studentGender,
-            'address' => $studentAdress,
-         
-        ]);
-
-        //return $categoryName;
-       
         return redirect()->route('students.index');
     }
 
@@ -60,7 +52,7 @@ class StudentController extends Controller
      */
     public function show(string $id)
     {
-        return view('backend.student.detail',compact('id'));
+        //
     }
 
     /**
@@ -68,7 +60,8 @@ class StudentController extends Controller
      */
     public function edit(string $id)
     {
-        return view('backend.student.edit',compact('id'));
+       $student = Student::find($id);
+       return view('backend.student.edit',compact('student'));  
     }
 
     /**
@@ -76,9 +69,32 @@ class StudentController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $students = Student::all();
-        return view('backend.student.list',compact('students'));
+         // var_dump($request->all());
+        // die();
+       // $request->validate([
+            //'studentName' => 'required|min:3',
+       // ]);
+
+        $studentName = $request->studentName;
+        $studentAge = $request->studentAge;
+        $studentGender = $request->studentGender;
+        $studentAddress = $request->studentAddress;
+
+
+        // update into database table
+        $student = Student::find($id);
+        $student->name = $studentName;
+        $student->age = $studentAge;
+        $student->gender = $studentGender;
+        $student->address = $studentAddress;
+        $student->save();
+
+        // redirect to list page
+        return redirect()->route('students.index');
     }
+
+
+    
 
     /**
      * Remove the specified resource from storage.
@@ -88,6 +104,5 @@ class StudentController extends Controller
         $student = Student::find($id);
         $student->delete();
         return redirect()->route('students.index');
-
     }
 }
